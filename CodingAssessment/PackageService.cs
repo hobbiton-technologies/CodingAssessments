@@ -17,7 +17,7 @@ public class PackageService
 
     public async Task<List<Package>> GetPackagesAsync()
     {
-        return await _databaseContext.Packages.ToListAsync();
+        return await _databaseContext.Packages.Include(x=>x.Benefits).ToListAsync();
     }
 
     public async Task<Package> GetPackageAsync(int packageId)

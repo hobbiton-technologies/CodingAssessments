@@ -10,13 +10,16 @@ This repository contains a coding assessment designed to test your programming s
 ### Objective:
 
 Create a RESTful API for a travel insurance package that connects to a database. The package model should include a list of benefits.
+
 The API should allow users to view, create, update, and delete travel insurance packages and their associated benefits.
+
+Implement an endpoint to upload a file for the supportingDocument.
 
 ### Requirements:
 
-* Use a web framework of your choice (e.g. Express, Flask, Django)
+* Use a web framework of your choice (e.g. Express, NEST JS, ASP.NET)
 
-* Connect to a database (e.g. MySQL, MongoDB, SQLite) to store and retrieve data for the travel insurance packages and their associated benefits.
+* Connect to a database (e.g. PostgreSQL, MySQL, SQLite) to store and retrieve data for the travel insurance packages and their associated benefits.
 
 The package object should have the following fields:
 

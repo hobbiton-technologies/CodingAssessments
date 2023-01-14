@@ -7,22 +7,22 @@ namespace CodingAssessment;
 public class PackageService
 {
 
-    private readonly DatabaseContext _databaseContext;
+    private readonly SqliteDbContext _sqliteDbContext;
 
-    public PackageService(DatabaseContext databaseContext)
+    public PackageService(SqliteDbContext sqliteDbContext)
     {
-        _databaseContext = databaseContext;
+        _sqliteDbContext = sqliteDbContext;
     }
 
 
     public async Task<List<Package>> GetPackagesAsync()
     {
-        return await _databaseContext.Packages.Include(x=>x.Benefits).ToListAsync();
+        return await _sqliteDbContext.Packages.Include(x=>x.Benefits).ToListAsync();
     }
 
     public async Task<Package> GetPackageAsync(int packageId)
     {
-        return await _databaseContext.Packages
+        return await _sqliteDbContext.Packages
             .Include(p => p.Benefits)
             .FirstOrDefaultAsync(p => p.Id == packageId) ?? throw new Exception("Package not found");
     }
@@ -31,8 +31,8 @@ public class PackageService
     public async Task<Package> AddPackageAsync(PackageRequest package)
     {
         var newPackage = package.Adapt<Package>();
-        await _databaseContext.Packages.AddAsync(newPackage);
-        await _databaseContext.SaveChangesAsync();
+        await _sqliteDbContext.Packages.AddAsync(newPackage);
+        await _sqliteDbContext.SaveChangesAsync();
         return newPackage;
     }
 
@@ -43,8 +43,8 @@ public class PackageService
 
         package.Adapt(existingPackage);
 
-        _databaseContext.Packages.Update(existingPackage);
-        await _databaseContext.SaveChangesAsync();
+        _sqliteDbContext.Packages.Update(existingPackage);
+        await _sqliteDbContext.SaveChangesAsync();
         return existingPackage;
     }
 
@@ -52,8 +52,8 @@ public class PackageService
     public async Task DeletePackageAsync(int packageId)
     {
         var existingPackage = await GetPackageAsync(packageId);
-        _databaseContext.Packages.Remove(existingPackage);
-        await _databaseContext.SaveChangesAsync();
+        _sqliteDbContext.Packages.Remove(existingPackage);
+        await _sqliteDbContext.SaveChangesAsync();
     }
 
 

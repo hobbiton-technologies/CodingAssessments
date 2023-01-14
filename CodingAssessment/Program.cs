@@ -2,6 +2,7 @@ using CodingAssessment;
 using Mapster;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 
@@ -12,6 +13,9 @@ TypeAdapterConfig.GlobalSettings.Default
     .NameMatchingStrategy(NameMatchingStrategy.IgnoreCase)
     .PreserveReference(true)
     .IgnoreNullValues(true);
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 // Add services to the container.
 
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
@@ -49,12 +53,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<PackageService>();
-
-builder.Services.AddSqlite<DatabaseContext>("Data Source=travel.db", optionsBuilder =>
-{
-    optionsBuilder.MigrationsAssembly("CodingAssessment");
-    
-});
+builder.Services.AddSqlite<SqliteDbContext>("Data Source=travel.db");
+builder.Services.AddNpgsql<PostgresDbContext>(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 var app = builder.Build();
 
@@ -105,5 +105,54 @@ app.MapPost("upload", async (IFormFile file) =>
         return operation;
     })
     .WithTags("Upload");
+
+
+app.MapGet("generate-transactions", async (PostgresDbContext db) =>
+{
+    var totalTransactions = await db.Transactions.CountAsync();
+    
+    var totalUsers = await db.Users.CountAsync();
+    
+    if(totalUsers > 0 && totalTransactions > 0)
+    {
+       return "Transactions already generated";
+    }
+
+    if (totalUsers <= 0)
+    {
+        var users = new List<string> { "Vincent", "Paul", "Mulenga", "Kembo", "Situmbeko" }.Select(x => new User
+        {
+            UserName = x,
+            Email = $"{x}@gmail.com"
+        });
+
+        db.Users.AddRange(users);
+    
+        await db.SaveChangesAsync();
+    }
+    
+    
+    
+    var transactions = Enumerable.Range(1, 500_000).Select(x => new Transaction
+    {
+        Amount = new Random().Next(1, 1000),
+        Date =  RandomDateBetween(new DateTime(2019, 1, 1), new DateTime(2022, 1, 1)).Date,    
+        UserId = new Random().Next(1, 5),
+        Type = new Random().Next(1, 3) == 1 ? "deposit" : "withdraw",
+    });
+
+    await db.Transactions.AddRangeAsync(transactions);
+    await db.SaveChangesAsync();
+    
+    
+    DateTime RandomDateBetween(DateTime start, DateTime end)
+    {
+        var range = end - start;
+        var randTimeSpan = new TimeSpan((long)(new Random().NextDouble() * range.Ticks));
+        return start + randTimeSpan;
+    }
+    
+    return "Transactions generated successfully";
+});
 
 app.Run();

@@ -2,7 +2,6 @@ using CodingAssessment;
 using Mapster;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 
@@ -106,31 +105,44 @@ app.MapPost("upload", async (IFormFile file) =>
     .WithTags("Upload");
 
 
-app.MapGet("generate-transactions", async (PostgresDbContext db) =>
+app.MapGet("seed", async (PostgresDbContext db) =>
 {
-    var totalTransactions = await db.Transactions.CountAsync();
-    
-    var totalUsers = await db.Users.CountAsync();
-    
-    if(totalUsers > 0 && totalTransactions > 0)
-    {
-       return "Transactions already generated";
-    }
 
-    if (totalUsers <= 0)
+
+    var package = new Package
     {
-        var users = new List<string> { "Vincent", "Paul", "Mulenga", "Kembo", "Situmbeko" }.Select(x => new User
+        Name = "Basic Travel Insurance" ,
+        Description = "This is a basic travel insurance package that provides coverage for medical emergencies and trip cancellations.",
+        Premium = 50.99,
+        SupportingDocumentUrl = "https://www.africau.edu/images/default/sample.pdf",
+        Benefits = new List<Benefit>
         {
-            UserName = x,
-            Email = $"{x}@gmail.com"
-        });
+            new()
+            {
+                Name = "Medical Emergency Coverage",
+                Description = "This benefit provides coverage for medical emergencies that occur while traveling, including hospital stays and emergency medical transportation."
+            },
+            new()
+            {
+                Name = "Trip Cancellation Coverage",
+                Description = "This benefit provides coverage for trip cancellations due to medical emergencies, natural disasters, and other covered reasons."
+            }
+            
+        }
+    };
+    
+    
+    db.Packages.Add(package);
 
-        db.Users.AddRange(users);
+    var users = new List<string> { "Vincent", "Paul", "Mulenga", "Kembo", "Situmbeko" }.Select(x => new User
+    {
+        UserName = x,
+        Email = $"{x}@gmail.com"
+    });
+
+    db.Users.AddRange(users);
     
-        await db.SaveChangesAsync();
-    }
-    
-    
+    await db.SaveChangesAsync();
     
     var transactions = Enumerable.Range(1, 500_000).Select(x => new Transaction
     {
@@ -141,9 +153,15 @@ app.MapGet("generate-transactions", async (PostgresDbContext db) =>
     });
 
     await db.Transactions.AddRangeAsync(transactions);
+    
     await db.SaveChangesAsync();
     
     
+    
+    
+    
+    
+
     DateTime RandomDateBetween(DateTime start, DateTime end)
     {
         var range = end - start;
@@ -151,7 +169,7 @@ app.MapGet("generate-transactions", async (PostgresDbContext db) =>
         return start + randTimeSpan;
     }
     
-    return "Transactions generated successfully";
+    return "Done";
 });
 
 app.Run();

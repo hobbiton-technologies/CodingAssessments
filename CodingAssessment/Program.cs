@@ -55,11 +55,11 @@ builder.Services.AddScoped<PackageService>();
 builder.Services.AddNpgsql<PostgresDbContext>(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 var app = builder.Build();
-
+app.UseSwagger();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+   
     app.UseSwaggerUI();
 }
 else

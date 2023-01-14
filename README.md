@@ -2,12 +2,35 @@
 
 This repository contains a coding assessment designed to test your programming skills and knowledge.
 
-## [FRONTEND](https://github.com/hobbiton-technologies/CodingAssessments/blob/main/FRONTEND.md)
+## FRONTEND
+
+
+Create a simple Travel Insurance application  written in either Angular or React The application should have the following features:
+1. Show a list of travel insurance packages with their benefits
+2. A form for adding packages (should include the name, description, premium, and list of benefits)
+3. Ability to edit and delete added insurance packages
+
+#### Submission
+1. Code for the application
+2. A README with instructions on how to run the code
+3. [Optional] A link to the deployed application
+
+
+#### Resources
+
+[API](https://assessement.hobbiton.tech)
+
+[Angular](https://angular.io/)
+
+[React](https://reactjs.org/)
+
+
+
 
 
 ## BACKEND
 
-### Objective:
+#### Objective:
 
 Create a RESTful API for a travel insurance package that connects to a database. The package model should include a list of benefits.
 
@@ -15,7 +38,7 @@ The API should allow users to view, create, update, and delete travel insurance 
 
 Implement an endpoint to upload a file for the supportingDocument.
 
-### Requirements:
+#### Requirements:
 
 * Use a web framework of your choice (e.g. Express, NEST JS, ASP.NET)
 
@@ -41,10 +64,20 @@ The package object should have the following fields:
 
    * description: a brief description of the benefit (string)
 
-### Submission:
+#### Submission:
 
-Create a public repository on Github and push your code there.
-Send the link to the repository along with a brief explanation of your design choices and any additional information you think is relevant.
+1. Create a public repository on Github and push your code there.
+
+2. Send the link to the repository along with a brief explanation of your design choices and any additional information you think is relevant.
+
+
+#### Resources
+
+[ASP.NET](https://dotnet.microsoft.com/en-us/apps/aspnet/apis)
+
+[NestJs](https://nestjs.com/)
+
+[Express](https://expressjs.com/)
 
 
 

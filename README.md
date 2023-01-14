@@ -25,9 +25,6 @@ Create a simple Travel Insurance application  written in either Angular or React
 [React](https://reactjs.org/)
 
 
-
-
-
 ## BACKEND
 
 #### Objective:

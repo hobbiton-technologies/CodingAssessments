@@ -53,7 +53,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<PackageService>();
-builder.Services.AddSqlite<SqliteDbContext>("Data Source=travel.db");
 builder.Services.AddNpgsql<PostgresDbContext>(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 var app = builder.Build();

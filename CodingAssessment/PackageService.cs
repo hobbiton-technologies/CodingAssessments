@@ -7,22 +7,22 @@ namespace CodingAssessment;
 public class PackageService
 {
 
-    private readonly SqliteDbContext _sqliteDbContext;
+    private readonly PostgresDbContext _postgresDbContext;
 
-    public PackageService(SqliteDbContext sqliteDbContext)
+    public PackageService(PostgresDbContext postgresDbContext)
     {
-        _sqliteDbContext = sqliteDbContext;
+        _postgresDbContext = postgresDbContext;
     }
 
 
     public async Task<List<Package>> GetPackagesAsync()
     {
-        return await _sqliteDbContext.Packages.Include(x=>x.Benefits).ToListAsync();
+        return await _postgresDbContext.Packages.Include(x=>x.Benefits).ToListAsync();
     }
 
     public async Task<Package> GetPackageAsync(int packageId)
     {
-        return await _sqliteDbContext.Packages
+        return await _postgresDbContext.Packages
             .Include(p => p.Benefits)
             .FirstOrDefaultAsync(p => p.Id == packageId) ?? throw new Exception("Package not found");
     }
@@ -31,8 +31,8 @@ public class PackageService
     public async Task<Package> AddPackageAsync(PackageRequest package)
     {
         var newPackage = package.Adapt<Package>();
-        await _sqliteDbContext.Packages.AddAsync(newPackage);
-        await _sqliteDbContext.SaveChangesAsync();
+        await _postgresDbContext.Packages.AddAsync(newPackage);
+        await _postgresDbContext.SaveChangesAsync();
         return newPackage;
     }
 
@@ -43,8 +43,8 @@ public class PackageService
 
         package.Adapt(existingPackage);
 
-        _sqliteDbContext.Packages.Update(existingPackage);
-        await _sqliteDbContext.SaveChangesAsync();
+        _postgresDbContext.Packages.Update(existingPackage);
+        await _postgresDbContext.SaveChangesAsync();
         return existingPackage;
     }
 
@@ -52,8 +52,8 @@ public class PackageService
     public async Task DeletePackageAsync(int packageId)
     {
         var existingPackage = await GetPackageAsync(packageId);
-        _sqliteDbContext.Packages.Remove(existingPackage);
-        await _sqliteDbContext.SaveChangesAsync();
+        _postgresDbContext.Packages.Remove(existingPackage);
+        await _postgresDbContext.SaveChangesAsync();
     }
 
 

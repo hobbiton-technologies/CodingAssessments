@@ -50,7 +50,11 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<PackageService>();
 
-builder.Services.AddNpgsql<DatabaseContext>(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddSqlite<DatabaseContext>("Data Source=travel.db", optionsBuilder =>
+{
+    optionsBuilder.MigrationsAssembly("CodingAssessment");
+    
+});
 
 var app = builder.Build();
 

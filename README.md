@@ -1,4 +1,4 @@
-# CodingAssessments
+# Coding Assessments
 
 This repository contains a coding assessment designed to test your programming skills and knowledge.
 

@@ -3,7 +3,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace CodingAssessment;
 
-[ApiController, Route("packages")]
+[ApiController, Route("packages"), Produces("application/json"), Consumes("application/json"),]
 public class PackagesController : ControllerBase
 {
     private readonly PackageService _packageService;
@@ -36,9 +36,9 @@ public class PackagesController : ControllerBase
 
     [HttpPut("{id:int}")]
     [SwaggerOperation("UpdatePackage", "Update a package")]
-    public async Task<ActionResult<Package>> UpdatePackage(int id,PackageUpdateRequest package)
+    public async Task<ActionResult<Package>> UpdatePackage(int id, PackageUpdateRequest package)
     {
-        return Ok(await _packageService.UpdatePackageAsync(id,package));
+        return Ok(await _packageService.UpdatePackageAsync(id, package));
     }
 
     [HttpDelete("{id:int}")]
@@ -48,12 +48,11 @@ public class PackagesController : ControllerBase
         await _packageService.DeletePackageAsync(id);
         return Ok();
     }
-    
+
 }
 
-
-[ApiController,Route("benefits")]
-public class  BenefitController : ControllerBase
+[ApiController, Route("benefits")]
+public class BenefitController : ControllerBase
 {
     private readonly PackageService _packageService;
 
@@ -61,8 +60,7 @@ public class  BenefitController : ControllerBase
     {
         _packageService = packageService;
     }
-    
-    
+
 
     [HttpPost("")]
     [SwaggerOperation("AddBenefit", "Add a benefit")]
@@ -73,9 +71,9 @@ public class  BenefitController : ControllerBase
 
     [HttpPut("{id:int}")]
     [SwaggerOperation("UpdateBenefit", "Update a benefit")]
-    public async Task<ActionResult<Benefit>> UpdateBenefit(int id,BenefitRequest benefit)
+    public async Task<ActionResult<Benefit>> UpdateBenefit(int id, BenefitRequest benefit)
     {
-        return Ok(await _packageService.UpdateBenefitAsync(id,benefit));
+        return Ok(await _packageService.UpdateBenefitAsync(id, benefit));
     }
 
     [HttpDelete("{id:int}")]
@@ -85,5 +83,5 @@ public class  BenefitController : ControllerBase
         await _packageService.DeleteBenefitAsync(id);
         return Ok();
     }
-    
+
 }

@@ -79,6 +79,11 @@ public class PackageService
     public async Task DeletePackageAsync(int packageId)
     {
         var existingPackage = await GetPackageAsync(packageId);
+        
+        foreach (var existingPackageBenefit in existingPackage.Benefits)
+        {
+            _postgresDbContext.Benefits.Remove(existingPackageBenefit);
+        }
         _postgresDbContext.Packages.Remove(existingPackage);
         await _postgresDbContext.SaveChangesAsync();
     }

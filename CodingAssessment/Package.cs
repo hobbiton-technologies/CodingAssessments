@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 namespace CodingAssessment;
 
 public record PackageRequest(string Name, string Description, double Premium, string SupportingDocumentUrl, ICollection<BenefitRequest> Benefits);
-public record PackageUpdateRequest(string? Name, string? Description, double? Premium, string? SupportingDocumentUrl, ICollection<BenefitRequest>? Benefits);
+public record PackageUpdateRequest(string? Name, string? Description, double? Premium, string? SupportingDocumentUrl);
+
 
 public class Package
 {
@@ -15,7 +16,9 @@ public class Package
     public ICollection<Benefit> Benefits { get; set; } = new HashSet<Benefit>();
 }
 
-public record BenefitRequest(string Name, string Description, double Premium);
+public record BenefitRequest(string Name, string Description);
+public record BenefitUpdateRequest(string? Name, string? Description);
+public record ProductBenefitRequest(int ProductId,string Name, string Description);
 
 public class Benefit
 {

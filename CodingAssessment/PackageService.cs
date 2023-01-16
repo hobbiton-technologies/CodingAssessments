@@ -17,7 +17,7 @@ public class PackageService
 
     public async Task<List<Package>> GetPackagesAsync()
     {
-        return await _postgresDbContext.Packages.Include(x=>x.Benefits).ToListAsync();
+        return await _postgresDbContext.Packages.Include(x => x.Benefits).ToListAsync();
     }
 
     public async Task<Package> GetPackageAsync(int packageId)
@@ -49,6 +49,33 @@ public class PackageService
     }
 
 
+    public async Task<Benefit> AddBenefitAsync(ProductBenefitRequest benefit)
+    {
+        var existingPackage = await GetPackageAsync(benefit.ProductId);
+        var newBenefit = benefit.Adapt<Benefit>();
+        existingPackage.Benefits.Add(newBenefit);
+        await _postgresDbContext.Benefits.AddAsync(newBenefit);
+        await _postgresDbContext.SaveChangesAsync();
+        return newBenefit;
+    }
+    
+    public async Task<Benefit> UpdateBenefitAsync(int benefitId, BenefitRequest benefit)
+    {
+        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ?? throw new Exception("Benefit not found");
+        benefit.Adapt(existingBenefit);
+        _postgresDbContext.Benefits.Update(existingBenefit);
+        await _postgresDbContext.SaveChangesAsync();
+        return existingBenefit;
+    }
+    
+    public async Task DeleteBenefitAsync(int benefitId)
+    {
+        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ?? throw new Exception("Benefit not found");
+        _postgresDbContext.Benefits.Remove(existingBenefit);
+        await _postgresDbContext.SaveChangesAsync();
+    }
+
+
     public async Task DeletePackageAsync(int packageId)
     {
         var existingPackage = await GetPackageAsync(packageId);
@@ -73,5 +100,6 @@ public class PackageService
         var uploadResponse = JsonSerializer.Deserialize<FileUploadResponse>(responseContent);
         return uploadResponse?.Url ?? throw new Exception("Failed to upload document");
     }
+
 
 }

@@ -76,8 +76,8 @@ Create a backend service using a web framework (Express, NestJS, or ASP.NET) tha
 1. Summary report: summary of all transactions made by the user including total deposits and total withdraws.
 2. Detailed report: breakdown of all transactions made by the user including date, and amount of each transaction.
 3. Balance report: breakdown of the user's current balance including total deposits and total withdraws.
-4. Summary report: a report that shows the total number of transactions made per day,week,month,year.
-5. Summary report: a report that shows the total number of transactions made by the user per day,week,month,year.
+4. Summary report: a report that shows the total number of transactions made per day,week,month,year filter by a date range.
+
 
 #### Transactions Table Schema:
 table: transactions

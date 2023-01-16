@@ -1,4 +1,4 @@
-# CodingAssessments
+# Coding Assessments
 
 This repository contains a coding assessment designed to test your programming skills and knowledge.
 
@@ -18,11 +18,9 @@ Create a simple Travel Insurance application  written in either Angular or React
 
 #### Resources
 
-[API](https://assessement.hobbiton.tech)
-
-[Angular](https://angular.io/)
-
-[React](https://reactjs.org/)
+  * [API Docs](https://assessment.hobbiton.tech/)
+  * [Angular](https://angular.io/)
+  * [React](https://reactjs.org/)
 
 
 # BACKEND
@@ -76,14 +74,10 @@ Create a backend service using a web framework (Express, NestJS, or ASP.NET) tha
 #### Requirements
 
 1. Summary report: summary of all transactions made by the user including total deposits and total withdraws.
-
 2. Detailed report: breakdown of all transactions made by the user including date, and amount of each transaction.
-
 3. Balance report: breakdown of the user's current balance including total deposits and total withdraws.
+4. Summary report: a report that shows the total number of transactions made per day,week,month,year filter by a date range.
 
-4. Summary report: a report that shows the total number of transactions made per day,week,month,year.
-
-5. Summary report: a report that shows the total number of transactions made by the user per day,week,month,year.
 
 #### Transactions Table Schema:
 table: transactions
@@ -117,17 +111,14 @@ email (string)
 #### Submission:
 
 1. Create a public repository on Github and push your code there.
-
 2. Send the link to the repository along with a brief explanation of your design choices and any additional information you think is relevant.
 
 
 
 #### Resources
 
-[ASP.NET](https://dotnet.microsoft.com/en-us/apps/aspnet/apis)
-
-[NestJs](https://nestjs.com/)
-
-[Express](https://expressjs.com/)
+* [ASP.NET](https://dotnet.microsoft.com/en-us/apps/aspnet/apis)
+* [NestJs](https://nestjs.com/)
+* [Express](https://expressjs.com/)
 
 

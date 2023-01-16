@@ -106,7 +106,7 @@ app.MapPost("upload", async (IFormFile file) =>
     })
     .WithTags("Upload");
 
-app.MapGet("seed", async (PostgresDbContext db) => await db.Seed());
+app.MapGet("seed", async (PostgresDbContext db) => await db.Seed()).ExcludeFromDescription();
 
 
 

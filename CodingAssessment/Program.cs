@@ -58,6 +58,8 @@ builder.Services.AddNpgsql<PostgresDbContext>(builder.Configuration.GetConnectio
 var app = builder.Build();
 
 
+app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
 app.UseSwagger();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

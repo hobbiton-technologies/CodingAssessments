@@ -24,7 +24,7 @@ public class PackageService
     {
         return await _postgresDbContext.Packages
             .Include(p => p.Benefits)
-            .FirstOrDefaultAsync(p => p.Id == packageId) ?? throw new Exception("Package not found");
+            .FirstOrDefaultAsync(p => p.Id == packageId) ?? throw new Exception($"Package with id {packageId} not found");
     }
 
 
@@ -58,19 +58,19 @@ public class PackageService
         await _postgresDbContext.SaveChangesAsync();
         return newBenefit;
     }
-    
+
     public async Task<Benefit> UpdateBenefitAsync(int benefitId, BenefitRequest benefit)
     {
-        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ?? throw new Exception("Benefit not found");
+        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ?? throw new Exception($"Benefit with id {benefitId} not found");
         benefit.Adapt(existingBenefit);
         _postgresDbContext.Benefits.Update(existingBenefit);
         await _postgresDbContext.SaveChangesAsync();
         return existingBenefit;
     }
-    
+
     public async Task DeleteBenefitAsync(int benefitId)
     {
-        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ?? throw new Exception("Benefit not found");
+        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ?? throw new Exception($"Benefit with id {benefitId} not found");
         _postgresDbContext.Benefits.Remove(existingBenefit);
         await _postgresDbContext.SaveChangesAsync();
     }
@@ -79,11 +79,12 @@ public class PackageService
     public async Task DeletePackageAsync(int packageId)
     {
         var existingPackage = await GetPackageAsync(packageId);
-        
+
         foreach (var existingPackageBenefit in existingPackage.Benefits)
         {
             _postgresDbContext.Benefits.Remove(existingPackageBenefit);
         }
+
         _postgresDbContext.Packages.Remove(existingPackage);
         await _postgresDbContext.SaveChangesAsync();
     }

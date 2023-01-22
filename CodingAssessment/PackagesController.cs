@@ -71,7 +71,7 @@ public class BenefitController : ControllerBase
 
     [HttpPut("{id:int}")]
     [SwaggerOperation("UpdateBenefit", "Update a benefit")]
-    public async Task<ActionResult<Benefit>> UpdateBenefit(int id, BenefitRequest benefit)
+    public async Task<ActionResult<Benefit>> UpdateBenefit(int id, BenefitUpdateRequest benefit)
     {
         return Ok(await _packageService.UpdateBenefitAsync(id, benefit));
     }

@@ -59,7 +59,7 @@ public class PackageService
         return newBenefit;
     }
 
-    public async Task<Benefit> UpdateBenefitAsync(int benefitId, BenefitRequest benefit)
+    public async Task<Benefit> UpdateBenefitAsync(int benefitId, BenefitUpdateRequest benefit)
     {
         var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ?? throw new Exception($"Benefit with id {benefitId} not found");
         benefit.Adapt(existingBenefit);

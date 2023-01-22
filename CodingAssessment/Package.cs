@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using CodingAssessment.Users;
 
 namespace CodingAssessment;
 
@@ -16,7 +17,7 @@ public class PackageUpdateRequest
 {
     [MinLength(1)] public string? Name { get; init; }
     [MinLength(1)] public string? Description { get; init; }
-    [MinLength(1)] public double? Premium { get; init; }
+    public double? Premium { get; init; }
     [MinLength(1)] public string? SupportingDocumentUrl { get; init; }
 
 }
@@ -29,6 +30,9 @@ public class Package
     [Required] public required double Premium { get; set; }
     [Required] public required string SupportingDocumentUrl { get; set; }
     [MinLength(1)] public ICollection<Benefit> Benefits { get; set; } = new HashSet<Benefit>();
+
+    public int? CreatedById { get; set; }
+    public User? CreatedBy { get; set; }
 }
 
 public class FileUploadResponse

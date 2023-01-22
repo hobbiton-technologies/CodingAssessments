@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CodingAssessment.Users;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +9,15 @@ public class PackageService
 {
 
     private readonly PostgresDbContext _postgresDbContext;
+    private readonly UserService _userService;
 
-    public PackageService(PostgresDbContext postgresDbContext)
+    private string? ApiKey;
+
+    public PackageService(PostgresDbContext postgresDbContext, IHttpContextAccessor httpContextAccessor, UserService userService)
     {
         _postgresDbContext = postgresDbContext;
+        _userService = userService;
+        ApiKey = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
     }
 
 
@@ -22,15 +28,31 @@ public class PackageService
 
     public async Task<Package> GetPackageAsync(int packageId)
     {
+        User? user = null;
+        if (ApiKey != null)
+        {
+            user = await _userService.GetUser(ApiKey);
+        }
+
         return await _postgresDbContext.Packages
             .Include(p => p.Benefits)
+            .Include(x => x.CreatedBy)
+            .ConditionalWhere(user != null, p => p.CreatedById == user!.Id)
             .FirstOrDefaultAsync(p => p.Id == packageId) ?? throw new Exception($"Package with id {packageId} not found");
     }
 
 
     public async Task<Package> AddPackageAsync(PackageRequest package)
     {
+        User? user = null;
+
+        if (ApiKey != null)
+        {
+            user = await _userService.GetUser(ApiKey);
+        }
+
         var newPackage = package.Adapt<Package>();
+        newPackage.CreatedBy = user;
         await _postgresDbContext.Packages.AddAsync(newPackage);
         await _postgresDbContext.SaveChangesAsync();
         return newPackage;
@@ -40,9 +62,7 @@ public class PackageService
     public async Task<Package> UpdatePackageAsync(int packageId, PackageUpdateRequest package)
     {
         var existingPackage = await GetPackageAsync(packageId);
-
         package.Adapt(existingPackage);
-
         _postgresDbContext.Packages.Update(existingPackage);
         await _postgresDbContext.SaveChangesAsync();
         return existingPackage;

@@ -1,3 +1,4 @@
+using CodingAssessment.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodingAssessment;
@@ -46,12 +47,13 @@ public class PostgresDbContext : DbContext
         };
 
 
-       Packages.Add(package);
+        Packages.Add(package);
 
         var users = new List<string> { "Vincent", "Paul", "Mulenga", "Kembo", "Situmbeko" }.Select(x => new User
         {
             UserName = x,
-            Email = $"{x}@gmail.com"
+            Email = $"{x}@gmail.com",
+            ApiKey = Guid.NewGuid().ToString(),
         });
 
         Users.AddRange(users);

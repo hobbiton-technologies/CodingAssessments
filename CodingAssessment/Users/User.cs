@@ -1,11 +1,14 @@
-namespace CodingAssessment;
+namespace CodingAssessment.Users;
 
 public class User
 {
     public int Id { get; set; }
     public required string UserName { get; set; }
     public required string Email { get; set; }
+
     public ICollection<Transaction> Transactions { get; set; } = new HashSet<Transaction>();
+
+    public required string ApiKey { get; set; }
 }
 
 public class Transaction

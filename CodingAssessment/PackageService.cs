@@ -11,33 +11,48 @@ public class PackageService
     private readonly PostgresDbContext _postgresDbContext;
     private readonly UserService _userService;
 
-    private string? ApiKey;
+    private readonly string? _apiKey;
 
     public PackageService(PostgresDbContext postgresDbContext, IHttpContextAccessor httpContextAccessor, UserService userService)
     {
         _postgresDbContext = postgresDbContext;
         _userService = userService;
-        ApiKey = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
+        _apiKey = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
     }
 
 
     public async Task<List<Package>> GetPackagesAsync()
     {
-        return await _postgresDbContext.Packages.Include(x => x.Benefits).ToListAsync();
+        if (_apiKey == null)
+        {
+            return await _postgresDbContext.Packages
+                .Include(x => x.Benefits)
+                .Where(x => x.CreatedBy == null)
+                .ToListAsync();
+        }
+
+        var user = await _userService.GetUser(_apiKey);
+        return await _postgresDbContext.Packages
+            .Include(x => x.Benefits)
+            .Where(x => x.CreatedById == user.Id)
+            .ToListAsync();
     }
 
     public async Task<Package> GetPackageAsync(int packageId)
     {
-        User? user = null;
-        if (ApiKey != null)
+        if (_apiKey == null)
         {
-            user = await _userService.GetUser(ApiKey);
+            return await _postgresDbContext.Packages
+                .Include(p => p.Benefits)
+                .Where(x => x.CreatedBy == null)
+                .FirstOrDefaultAsync(p => p.Id == packageId) ?? throw new Exception($"Package with id {packageId} not found");
         }
+
+        var user = await _userService.GetUser(_apiKey);
 
         return await _postgresDbContext.Packages
             .Include(p => p.Benefits)
-            .Include(x => x.CreatedBy)
-            .ConditionalWhere(user != null, p => p.CreatedById == user!.Id)
+            .Where(x => x.CreatedById == user.Id)
             .FirstOrDefaultAsync(p => p.Id == packageId) ?? throw new Exception($"Package with id {packageId} not found");
     }
 
@@ -46,9 +61,9 @@ public class PackageService
     {
         User? user = null;
 
-        if (ApiKey != null)
+        if (_apiKey != null)
         {
-            user = await _userService.GetUser(ApiKey);
+            user = await _userService.GetUser(_apiKey);
         }
 
         var newPackage = package.Adapt<Package>();

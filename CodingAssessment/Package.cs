@@ -31,8 +31,8 @@ public class Package
     [Required] public required string SupportingDocumentUrl { get; set; }
     [MinLength(1)] public ICollection<Benefit> Benefits { get; set; } = new HashSet<Benefit>();
 
-    public int? CreatedById { get; set; }
-    public User? CreatedBy { get; set; }
+    [JsonIgnore] public int? CreatedById { get; set; }
+    [JsonIgnore] public User? CreatedBy { get; set; }
 }
 
 public class FileUploadResponse

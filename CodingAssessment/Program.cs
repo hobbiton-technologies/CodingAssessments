@@ -2,6 +2,7 @@ using CodingAssessment;
 using CodingAssessment.Users;
 using Mapster;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -63,6 +64,10 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<PackageService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddNpgsql<PostgresDbContext>(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddHttpLogging(options =>
+{
+    options.LoggingFields = HttpLoggingFields.All;
+});
 
 var app = builder.Build();
 
@@ -71,7 +76,7 @@ app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.UseSwagger();
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwaggerUI();
 }
@@ -80,6 +85,7 @@ else
     app.UseReDoc(c => c.RoutePrefix = string.Empty);
 }
 
+app.UseHttpLogging();
 app.UseExceptionHandler(a => a.Run(async context =>
 {
     var response = context.Response;

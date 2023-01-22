@@ -56,6 +56,9 @@ namespace CodingAssessment.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -73,10 +76,12 @@ namespace CodingAssessment.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.ToTable("Packages");
                 });
 
-            modelBuilder.Entity("CodingAssessment.Transaction", b =>
+            modelBuilder.Entity("CodingAssessment.Users.Transaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -104,13 +109,17 @@ namespace CodingAssessment.Migrations
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("CodingAssessment.User", b =>
+            modelBuilder.Entity("CodingAssessment.Users.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApiKey")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -132,9 +141,18 @@ namespace CodingAssessment.Migrations
                         .HasForeignKey("PackageId");
                 });
 
-            modelBuilder.Entity("CodingAssessment.Transaction", b =>
+            modelBuilder.Entity("CodingAssessment.Package", b =>
                 {
-                    b.HasOne("CodingAssessment.User", null)
+                    b.HasOne("CodingAssessment.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("CodingAssessment.Users.Transaction", b =>
+                {
+                    b.HasOne("CodingAssessment.Users.User", null)
                         .WithMany("Transactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -146,7 +164,7 @@ namespace CodingAssessment.Migrations
                     b.Navigation("Benefits");
                 });
 
-            modelBuilder.Entity("CodingAssessment.User", b =>
+            modelBuilder.Entity("CodingAssessment.Users.User", b =>
                 {
                     b.Navigation("Transactions");
                 });

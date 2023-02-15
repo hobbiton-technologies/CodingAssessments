@@ -49,39 +49,32 @@ public class PackagesController : ControllerBase
         return Ok();
     }
 
+
 }
 
-[ApiController, Route("benefits")]
-public class BenefitController : ControllerBase
+
+[ApiController,Route("upload")]
+public class UploadController : ControllerBase
 {
     private readonly PackageService _packageService;
 
-    public BenefitController(PackageService packageService)
+    public UploadController(PackageService packageService)
     {
         _packageService = packageService;
     }
 
-
-    [HttpPost("")]
-    [SwaggerOperation("AddBenefit", "Add a benefit")]
-    public async Task<ActionResult<Benefit>> AddBenefit(ProductBenefitRequest benefit)
+    [HttpPost]
+    [SwaggerOperation("Upload supporting document", "Upload document")]
+    public async Task<ActionResult> UploadDocument([FromForm] FileUploadRequest request)
     {
-        return Ok(await _packageService.AddBenefitAsync(benefit));
+        var result = await _packageService.UploadDocumentAsync(new FileUploadPayload
+        {
+            File = request.File,
+            BucketName = "assessment",
+        });
+        return Ok(new
+        {
+            Url = result,
+        });
     }
-
-    [HttpPut("{id:int}")]
-    [SwaggerOperation("UpdateBenefit", "Update a benefit")]
-    public async Task<ActionResult<Benefit>> UpdateBenefit(int id, BenefitUpdateRequest benefit)
-    {
-        return Ok(await _packageService.UpdateBenefitAsync(id, benefit));
-    }
-
-    [HttpDelete("{id:int}")]
-    [SwaggerOperation("DeleteBenefit", "Delete a benefit")]
-    public async Task<ActionResult> DeleteBenefit(int id)
-    {
-        await _packageService.DeleteBenefitAsync(id);
-        return Ok();
-    }
-
 }

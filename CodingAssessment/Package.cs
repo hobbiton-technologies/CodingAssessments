@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using CodingAssessment.Users;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CodingAssessment;
 
@@ -35,9 +36,21 @@ public class Package
     [JsonIgnore] public User? CreatedBy { get; set; }
 }
 
+public class FileUploadRequest
+{
+  [FromForm]  public required IFormFile File { get; set; }
+}
+
+public class FileUploadPayload
+{
+    public required IFormFile File { get; set; }
+    public required string BucketName { get; set; }
+    
+    public string? Directory { get; set; }
+}
+
 public class FileUploadResponse
 {
     [JsonPropertyName("success")] public bool Success { get; set; }
-
     [JsonPropertyName("url")] public string Url { get; set; } = null!;
 }

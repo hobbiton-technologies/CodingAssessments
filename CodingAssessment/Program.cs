@@ -93,6 +93,12 @@ app.UseExceptionHandler(a => a.Run(async context =>
     var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
     var exception = exceptionHandlerPathFeature?.Error;
 
+    var logger = a.ApplicationServices
+        .GetRequiredService<ILoggerFactory>()
+        .CreateLogger("Global exception logger");
+
+    logger.LogError(exception, "{@Message}", exception?.Message);
+
     await context.Response.WriteAsJsonAsync(new
     {
         Status = 500,
@@ -105,23 +111,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-
-app.MapPost("upload", async (IFormFile file) =>
-    {
-        var package = await PackageService.UploadDocumentAsync(file);
-
-        return Results.Ok(new
-        {
-            Url = package,
-        });
-    })
-    .WithOpenApi(operation =>
-    {
-        operation.Summary = "Upload a package";
-        return operation;
-    })
-    .WithTags("Upload");
 
 app.MapGet("seed", async (PostgresDbContext db) => await db.Seed()).ExcludeFromDescription();
 

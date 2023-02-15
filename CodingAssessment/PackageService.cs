@@ -1,5 +1,6 @@
 using System.Text.Json;
 using CodingAssessment.Users;
+using Flurl.Http;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +11,10 @@ public class PackageService
 
     private readonly PostgresDbContext _postgresDbContext;
     private readonly UserService _userService;
-
     private readonly string? _apiKey;
 
-    public PackageService(PostgresDbContext postgresDbContext, IHttpContextAccessor httpContextAccessor, UserService userService)
+    public PackageService(PostgresDbContext postgresDbContext, IHttpContextAccessor httpContextAccessor,
+        UserService userService)
     {
         _postgresDbContext = postgresDbContext;
         _userService = userService;
@@ -43,17 +44,19 @@ public class PackageService
         if (_apiKey == null)
         {
             return await _postgresDbContext.Packages
-                .Include(p => p.Benefits)
-                .Where(x => x.CreatedBy == null)
-                .FirstOrDefaultAsync(p => p.Id == packageId) ?? throw new Exception($"Package with id {packageId} not found");
+                       .Include(p => p.Benefits)
+                       .Where(x => x.CreatedBy == null)
+                       .FirstOrDefaultAsync(p => p.Id == packageId) ??
+                   throw new Exception($"Package with id {packageId} not found");
         }
 
         var user = await _userService.GetUser(_apiKey);
 
         return await _postgresDbContext.Packages
-            .Include(p => p.Benefits)
-            .Where(x => x.CreatedById == user.Id)
-            .FirstOrDefaultAsync(p => p.Id == packageId) ?? throw new Exception($"Package with id {packageId} not found");
+                   .Include(p => p.Benefits)
+                   .Where(x => x.CreatedById == user.Id)
+                   .FirstOrDefaultAsync(p => p.Id == packageId) ??
+               throw new Exception($"Package with id {packageId} not found");
     }
 
 
@@ -96,7 +99,8 @@ public class PackageService
 
     public async Task<Benefit> UpdateBenefitAsync(int benefitId, BenefitUpdateRequest benefit)
     {
-        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ?? throw new Exception($"Benefit with id {benefitId} not found");
+        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ??
+                              throw new Exception($"Benefit with id {benefitId} not found");
         benefit.Adapt(existingBenefit);
         _postgresDbContext.Benefits.Update(existingBenefit);
         await _postgresDbContext.SaveChangesAsync();
@@ -105,7 +109,8 @@ public class PackageService
 
     public async Task DeleteBenefitAsync(int benefitId)
     {
-        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ?? throw new Exception($"Benefit with id {benefitId} not found");
+        var existingBenefit = await _postgresDbContext.Benefits.FirstOrDefaultAsync(x => x.Id == benefitId) ??
+                              throw new Exception($"Benefit with id {benefitId} not found");
         _postgresDbContext.Benefits.Remove(existingBenefit);
         await _postgresDbContext.SaveChangesAsync();
     }
@@ -125,21 +130,17 @@ public class PackageService
     }
 
 
-    public static async Task<string> UploadDocumentAsync(IFormFile document)
+    public async Task<string> UploadDocumentAsync(FileUploadPayload document)
     {
-        using var httpClient = new HttpClient();
-        var content = new MultipartFormDataContent();
-        content.Add(new StreamContent(document.OpenReadStream()), "file", document.FileName);
-        var response = await httpClient.PostAsync("https://storage-api.hobbiton.tech/Uploads", content);
+        var result = await "https://assessment.hobbiton.tech/upload"
+            .PostMultipartAsync(content =>
+            {
+                content.Add("bucketName", new StringContent(document.BucketName));
+                content.AddFile("file", document.File.OpenReadStream(), document.File.FileName);
+            })
+            .ReceiveJson<FileUploadResponse>();
 
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception("Failed to upload document");
-        }
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var uploadResponse = JsonSerializer.Deserialize<FileUploadResponse>(responseContent);
-        return uploadResponse?.Url ?? throw new Exception("Failed to upload document");
+        return result?.Url ?? throw new Exception("Failed to upload document");
     }
 
 

@@ -132,7 +132,7 @@ public class PackageService
 
     public async Task<string> UploadDocumentAsync(FileUploadPayload document)
     {
-        var result = await "https://assessment.hobbiton.tech/upload"
+        var result = await "https://storage-api.hobbiton.tech/uploads"
             .PostMultipartAsync(content =>
             {
                 content.AddFile("file", document.File.OpenReadStream(), document.File.FileName);

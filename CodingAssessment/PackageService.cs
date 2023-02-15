@@ -135,8 +135,9 @@ public class PackageService
         var result = await "https://assessment.hobbiton.tech/upload"
             .PostMultipartAsync(content =>
             {
-                content.Add("bucketName", new StringContent(document.BucketName));
                 content.AddFile("file", document.File.OpenReadStream(), document.File.FileName);
+                content.AddString("bucketName", document.BucketName);
+                
             })
             .ReceiveJson<FileUploadResponse>();
 

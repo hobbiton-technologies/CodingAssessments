@@ -19,7 +19,7 @@ Create a simple Travel Insurance application  written in either Angular or React
 
 #### Resources
 
-  * [API Docs](https://assessment.hobbiton.tech/)
+  * [API Docs](https://assessments.hobbiton.tech/)
   * [Angular](https://angular.io/)
   * [React](https://reactjs.org/)
 
